@@ -29,14 +29,36 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn("$5 Ko-fi tip", self.index)
         self.assertRegex(
             self.index,
-            r'<a class="tip hero-tip" href="https://ko-fi\.com/quarkassistant"[^>]*>Tip via Ko-fi</a>',
+            r'<a class="tip hero-tip" href="https://ko-fi\.com/quarkassistant"[^>]*>Tip \$5 via Ko-fi</a>',
         )
         self.assertIn('Runs locally in your browser; no upload.', self.index)
 
     def test_result_output_includes_post_value_tip_cta(self):
         self.assertIn('class="result-tip"', self.app)
         self.assertIn('https://ko-fi.com/quarkassistant', self.app)
-        self.assertIn('https://www.paypal.me/quarkassistant', self.app)
+        self.assertNotIn('paypal.me', self.index.lower())
+        self.assertNotIn('paypal.me', self.app.lower())
+
+    def test_report_can_be_copied_or_downloaded_after_value_is_created(self):
+        for snippet in [
+            'id="report-actions"',
+            'id="copy-report"',
+            'id="download-report"',
+            'Copy report',
+            'Download .txt',
+        ]:
+            with self.subTest(snippet=snippet):
+                self.assertIn(snippet, self.index)
+        for snippet in [
+            'let latestReportText',
+            'function buildPlainReport',
+            'navigator.clipboard.writeText(latestReportText)',
+            "a.download = 'resume-reality-check.txt'",
+            'tip $5 via Ko-fi',
+            'Disclosure: Built by Quark Assistant',
+        ]:
+            with self.subTest(snippet=snippet):
+                self.assertIn(snippet, self.app)
 
     def test_product_has_low_friction_share_control(self):
         self.assertIn('id="share"', self.index)

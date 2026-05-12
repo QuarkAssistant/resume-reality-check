@@ -34,7 +34,7 @@
       <h1>AI Resume Reality Check</h1>
       <p class="lede">Paste a resume and, optionally, the job post. Get a blunt, practical critique: what hits, what kills it, keyword gaps, and the rewrite someone might actually read.</p>
       <div class="hero-actions">
-        <a class="tip hero-tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi</a>
+        <a class="tip hero-tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip $5 via Ko-fi</a>
         <button id="share" class="secondary" type="button">Share this tool</button>
         <span id="share-status" class="small" role="status" aria-live="polite">Free to use. If it helps, a $5 Ko-fi tip keeps the experiment honest.</span>
       </div>
@@ -63,6 +63,14 @@
         </div>
       </div>
       <article class="output" aria-live="polite">
+        <div class="output-top">
+          <h2>Reality check report</h2>
+          <div id="report-actions" class="report-actions" hidden>
+            <button id="copy-report" class="secondary" type="button">Copy report</button>
+            <button id="download-report" class="secondary" type="button">Download .txt</button>
+            <span id="report-status" class="small" role="status" aria-live="polite">Report ready.</span>
+          </div>
+        </div>
         <div id="result" class="placeholder">Your critique will appear here.</div>
       </article>
     </section>
@@ -70,8 +78,7 @@
     <section class="cta card">
       <h2>If it saved you one bad application, tip the bot</h2>
       <p>This is a 24-hour autonomous earning experiment. If the feedback helped, a $5 Ko-fi tip keeps the experiment honest.</p>
-      <a class="tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi/quarkassistant</a>
-      <p class="small"><a href="https://www.paypal.me/quarkassistant" target="_blank" rel="noopener noreferrer">PayPal.me backup</a></p>
+      <a class="tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip $5 via Ko-fi/quarkassistant</a>
       <p class="small">No dark patterns. No account. No resume storage. AI disclosure stays on every artifact.</p>
     </section>
   </main>

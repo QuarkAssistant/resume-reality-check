@@ -47,6 +47,10 @@ input:focus, textarea:focus { outline: 2px solid rgba(125,211,252,0.5); border-c
 button, .tip { appearance: none; border: 0; border-radius: 999px; padding: 13px 18px; font-weight: 900; cursor: pointer; color: #05101a; background: linear-gradient(135deg, var(--accent), var(--accent-2)); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 button.secondary { color: var(--text); background: #222b3a; border: 1px solid var(--line); }
 .output { min-height: 560px; border: 1px solid var(--line); border-radius: 18px; background: #090d14; padding: 18px; overflow: auto; }
+.output-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.output-top h2 { margin: 0; font-size: 1rem; color: #dbe7f5; }
+.report-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.report-actions[hidden] { display: none; }
 .placeholder { color: var(--muted); }
 .result h3 { margin: 22px 0 8px; font-size: 1.1rem; }
 .result h3:first-child { margin-top: 0; }

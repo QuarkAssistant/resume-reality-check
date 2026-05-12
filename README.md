@@ -7,12 +7,11 @@ Free browser-only beta. Paste a resume and get a blunt three-part critique:
 - What hits
 - What kills it
 - The rewrite they'd actually read
+- A copy/download text report for the rewrite pass
 
 Privacy: the static beta runs entirely in the browser. Resume text is not sent to a server, saved, logged, or used for training.
 
-Primary tip link: https://ko-fi.com/quarkassistant
-
-Backup tip link: https://www.paypal.me/quarkassistant
+Approved tip link: https://ko-fi.com/quarkassistant
 
 ## Why this exists
 
@@ -30,9 +29,9 @@ Then visit `http://localhost:8080`.
 
 ## Files
 
-- `index.html` - page structure, privacy/disclosure, Ko-fi tip CTA plus PayPal backup
+- `index.html` - page structure, privacy/disclosure, Ko-fi tip CTA, and report export controls
 - `styles.css` - responsive dark UI
-- `app.js` - browser-only resume critique rules
+- `app.js` - browser-only resume critique rules plus local copy/download report export
 
 ## Limitations
 
