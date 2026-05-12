@@ -45,6 +45,15 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('navigator.clipboard.writeText', self.app)
         self.assertIn('https://quarkassistant.github.io/resume-reality-check/', self.app)
 
+    def test_optional_job_post_keyword_gap_is_local_and_visible(self):
+        self.assertIn('id="job-post"', self.index)
+        self.assertIn('Job post text', self.index)
+        self.assertIn('local ATS-style keyword gap', self.index)
+        self.assertIn('function keywordGap(resumeText, jobText)', self.app)
+        self.assertIn('Keyword gap from the job post', self.app)
+        self.assertIn('sampleJob', self.app)
+        self.assertIn("document.getElementById('job-post').value = ''", self.app)
+
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
         sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")

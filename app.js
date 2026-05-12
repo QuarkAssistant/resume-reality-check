@@ -5,6 +5,9 @@ const weakPhrases = [
 ];
 const verbs = ['achieved','automated','built','created','cut','decreased','delivered','designed','drove','grew','improved','increased','launched','led','managed','optimized','owned','reduced','shipped','streamlined'];
 const tools = ['excel','python','sql','salesforce','hubspot','tableau','power bi','javascript','react','node','aws','gcp','azure','figma','google analytics','shopify','wordpress','quickbooks','jira','notion','zapier'];
+const stopWords = new Set([
+  'about','after','also','and','are','based','been','being','both','business','can','candidate','company','cross','customer','data','day','deliver','each','experience','for','from','have','into','job','new','our','own','role','team','that','the','their','this','through','using','with','will','work','you','your'
+]);
 const sections = {
   experience: ['experience','employment','work history'],
   skills: ['skills','tools','technologies','technical'],
@@ -23,12 +26,35 @@ Operations Coordinator, ExampleCo
 
 Skills
 Excel, SQL, Notion, Jira, Salesforce`;
+const sampleJob = `Product Operations Associate
+We need someone to improve weekly reporting, maintain Salesforce hygiene, build SQL and Excel dashboards, document operations workflows, and coordinate vendor onboarding. Strong candidates can quantify process improvements and communicate with support, sales, and leadership.`;
 
 function esc(s) {
   return String(s).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
 }
 function uniq(arr) { return [...new Set(arr)].filter(Boolean); }
 function preview(arr, n = 5) { return arr.slice(0, n).join(', '); }
+function extractKeywords(text, limit = 12) {
+  const counts = new Map();
+  const phrases = (text.toLowerCase().match(/\b(?:power bi|google analytics|customer success|project management|product operations|data analysis|process improvement|vendor onboarding|salesforce hygiene)\b/g) || []);
+  for (const phrase of phrases) counts.set(phrase, (counts.get(phrase) || 0) + 3);
+  const words = text.toLowerCase().match(/[a-z][a-z+#.-]{2,}/g) || [];
+  for (const word of words) {
+    if (stopWords.has(word) || word.length < 4) continue;
+    counts.set(word, (counts.get(word) || 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([word]) => word);
+}
+function keywordGap(resumeText, jobText) {
+  const required = extractKeywords(jobText);
+  const resumeLower = resumeText.toLowerCase();
+  const present = required.filter(k => resumeLower.includes(k));
+  const missing = required.filter(k => !resumeLower.includes(k));
+  return { required, present, missing };
+}
 function analyze(text) {
   const lower = text.toLowerCase();
   const words = (text.match(/[A-Za-z][A-Za-z+.#-]*/g) || []);
@@ -75,6 +101,7 @@ async function shareProduct() {
 function critique() {
   const text = document.getElementById('resume').value.trim();
   const target = document.getElementById('target').value.trim();
+  const jobPost = document.getElementById('job-post').value.trim();
   const out = document.getElementById('result');
   if (!text) {
     out.className = 'result';
@@ -85,6 +112,9 @@ function critique() {
   const hits = [];
   const kills = [];
   const rewrites = [];
+  const gap = jobPost ? keywordGap(text, jobPost) : null;
+  if (gap && gap.present.length) hits.push(`Job-post overlap is visible: ${esc(preview(gap.present, 6))}. Keep those exact words where they are honest.`);
+  if (gap && gap.missing.length) kills.push(`Keyword gap from the pasted job post: ${esc(preview(gap.missing, 8))}. Add only the ones you can defend with real experience.`);
   if (a.metrics.length) hits.push(`You included measurable proof (${esc(preview(a.metrics))}). Keep those numbers close to the top.`);
   if (a.foundVerbs.length) hits.push(`Some action language is already there (${esc(preview(a.foundVerbs, 6))}). Good. Make it more consistent.`);
   if (a.foundTools.length) hits.push(`Concrete tools/keywords appear (${esc(preview(a.foundTools, 8))}), which helps recruiters and ATS filters skim faster.`);
@@ -111,15 +141,36 @@ function critique() {
   if (weakBullet) rewrites.push(`Replace: "${esc(weakBullet.slice(0, 140))}" with "Owned [specific problem], took [specific action], and delivered [number/result]."`);
   rewrites.push('Final pass: cut adjectives you cannot prove, move the best metric into the first half page, and align headings to the role being pursued.');
 
+  const gapHtml = gap ? `
+    <h3 class="gap">Keyword gap from the job post</h3>
+    <ul>
+      <li><strong>Matched:</strong> ${gap.present.length ? esc(preview(gap.present, 10)) : 'No clear overlap detected yet.'}</li>
+      <li><strong>Missing or buried:</strong> ${gap.missing.length ? esc(preview(gap.missing, 10)) : 'No major keyword gaps in the top extracted terms.'}</li>
+      <li>Use this as a rewrite checklist, not as permission to keyword-stuff. Every added term needs a proof bullet.</li>
+    </ul>
+  ` : '';
+
   out.className = 'result';
   out.innerHTML = `
     <h3 class="good">What hits</h3><ul>${hits.map(x => `<li>${x}</li>`).join('')}</ul>
     <h3 class="bad">What kills it</h3><ul>${kills.map(x => `<li>${x}</li>`).join('')}</ul>
+    ${gapHtml}
     <h3 class="rewrite">The rewrite they'd actually read</h3><ul>${rewrites.map(x => `<li>${x}</li>`).join('')}</ul>
     ${tipCta}
   `;
 }
 document.getElementById('run').addEventListener('click', critique);
 document.getElementById('share').addEventListener('click', shareProduct);
-document.getElementById('sample').addEventListener('click', () => { document.getElementById('resume').value = sample; document.getElementById('target').value = 'Product operations associate'; critique(); });
-document.getElementById('clear').addEventListener('click', () => { document.getElementById('resume').value = ''; document.getElementById('target').value = ''; document.getElementById('result').className = 'placeholder'; document.getElementById('result').textContent = 'Your critique will appear here.'; });
+document.getElementById('sample').addEventListener('click', () => {
+  document.getElementById('resume').value = sample;
+  document.getElementById('job-post').value = sampleJob;
+  document.getElementById('target').value = 'Product operations associate';
+  critique();
+});
+document.getElementById('clear').addEventListener('click', () => {
+  document.getElementById('resume').value = '';
+  document.getElementById('job-post').value = '';
+  document.getElementById('target').value = '';
+  document.getElementById('result').className = 'placeholder';
+  document.getElementById('result').textContent = 'Your critique will appear here.';
+});

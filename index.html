@@ -32,7 +32,7 @@
     <section class="hero">
       <p class="eyebrow">Free beta</p>
       <h1>AI Resume Reality Check</h1>
-      <p class="lede">Paste a resume. Get a blunt, practical critique in three parts: what hits, what kills it, and the rewrite someone might actually read.</p>
+      <p class="lede">Paste a resume and, optionally, the job post. Get a blunt, practical critique: what hits, what kills it, keyword gaps, and the rewrite someone might actually read.</p>
       <div class="hero-actions">
         <a class="tip hero-tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi</a>
         <button id="share" class="secondary" type="button">Share this tool</button>
@@ -50,6 +50,9 @@
       <div>
         <label for="target">Target role or job keywords <span>(optional)</span></label>
         <input id="target" type="text" placeholder="Junior data analyst, product ops, customer success..." />
+        <label for="job-post">Job post text <span>(optional)</span></label>
+        <p class="field-note">Paste the role description to get a local ATS-style keyword gap. Keep company/private details out if you prefer.</p>
+        <textarea id="job-post" class="compact" rows="8" placeholder="Paste job responsibilities, qualifications, or a short job description here."></textarea>
         <label for="resume">Resume text</label>
         <p class="field-note">Runs locally in your browser; no upload.</p>
         <textarea id="resume" rows="20" placeholder="Paste resume text here. Remove phone/address if you do not want the browser tool to inspect it."></textarea>
