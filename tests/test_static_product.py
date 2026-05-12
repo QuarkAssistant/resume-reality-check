@@ -38,6 +38,13 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('https://ko-fi.com/quarkassistant', self.app)
         self.assertIn('https://www.paypal.me/quarkassistant', self.app)
 
+    def test_product_has_low_friction_share_control(self):
+        self.assertIn('id="share"', self.index)
+        self.assertIn('Share this tool', self.index)
+        self.assertIn('navigator.share', self.app)
+        self.assertIn('navigator.clipboard.writeText', self.app)
+        self.assertIn('https://quarkassistant.github.io/resume-reality-check/', self.app)
+
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
         sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")

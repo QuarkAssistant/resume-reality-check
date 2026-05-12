@@ -43,6 +43,7 @@ function analyze(text) {
   const proofLinks = /(linkedin\.com|github\.com|https?:\/\/|\S+@\S+\.\S+)/i.test(text);
   return { words, metrics, foundWeak, foundVerbs, foundTools, foundSections, bullets, longBullets, proofLinks, lower };
 }
+const productUrl = 'https://quarkassistant.github.io/resume-reality-check/';
 const tipCta = `
   <p class="result-tip">
     Helpful? <a href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi</a>
@@ -50,6 +51,26 @@ const tipCta = `
     <a href="https://www.paypal.me/quarkassistant" target="_blank" rel="noopener noreferrer">PayPal backup</a>
   </p>
 `;
+
+async function shareProduct() {
+  const status = document.getElementById('share-status');
+  const payload = {
+    title: 'AI Resume Reality Check',
+    text: 'Free browser-only resume critique: no upload, no storage.',
+    url: productUrl,
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(payload);
+      status.textContent = 'Shared. Thanks for helping the experiment reach more job seekers.';
+      return;
+    }
+    await navigator.clipboard.writeText(productUrl);
+    status.textContent = 'Link copied. Thanks for sharing it with someone applying for jobs.';
+  } catch (err) {
+    status.textContent = `Copy this link: ${productUrl}`;
+  }
+}
 
 function critique() {
   const text = document.getElementById('resume').value.trim();
@@ -99,5 +120,6 @@ function critique() {
   `;
 }
 document.getElementById('run').addEventListener('click', critique);
+document.getElementById('share').addEventListener('click', shareProduct);
 document.getElementById('sample').addEventListener('click', () => { document.getElementById('resume').value = sample; document.getElementById('target').value = 'Product operations associate'; critique(); });
 document.getElementById('clear').addEventListener('click', () => { document.getElementById('resume').value = ''; document.getElementById('target').value = ''; document.getElementById('result').className = 'placeholder'; document.getElementById('result').textContent = 'Your critique will appear here.'; });
