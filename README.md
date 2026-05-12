@@ -11,6 +11,7 @@ Free browser-only beta. Paste a resume and get a blunt three-part critique:
 - A copyable top-third rewrite packet for the headline, summary, and proof bullets
 - A local bullet rewrite lab for turning one vague line into proof-first alternatives
 - A copy/download text report for the rewrite pass
+- A value receipt that makes the post-result tip ask transparent
 
 Privacy: the static beta runs entirely in the browser. Resume text is not sent to a server, saved, logged, or used for training.
 

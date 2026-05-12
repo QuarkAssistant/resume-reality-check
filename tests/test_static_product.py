@@ -140,6 +140,14 @@ class StaticProductConversionTests(unittest.TestCase):
             with self.subTest(snippet=snippet):
                 self.assertIn(snippet, self.app)
 
+    def test_post_result_value_receipt_makes_tip_ask_transparent(self):
+        self.assertIn('function buildValueReceipt(snapshot, gap)', self.app)
+        self.assertIn('Value receipt before you tip', self.app)
+        self.assertIn('Tip only if this saved at least 20 minutes', self.app)
+        self.assertIn('buildValueReceipt(snapshot, gap)', self.app)
+        self.assertIn('value-receipt', (ROOT / "styles.css").read_text(encoding="utf-8"))
+        self.assertIn('value receipt', (ROOT / "README.md").read_text(encoding="utf-8").lower())
+
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
         sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
