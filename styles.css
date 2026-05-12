@@ -73,5 +73,7 @@ button.secondary { color: var(--text); background: #222b3a; border: 1px solid va
 .copy-plan { margin: 4px 10px 10px 0; }
 .rewrite { color: #e9d5ff; }
 .cta { margin-top: 24px; }
+.share-card { margin-top: 16px; }
+.site-footer { margin-top: 22px; color: var(--muted); font-size: 0.9rem; text-align: center; }
 .small { color: var(--muted); font-size: 0.92rem; }
 @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } .shell { padding-top: 32px; } .fit-snapshot { grid-template-columns: 1fr; } }

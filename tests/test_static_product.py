@@ -63,9 +63,20 @@ class StaticProductConversionTests(unittest.TestCase):
     def test_product_has_low_friction_share_control(self):
         self.assertIn('id="share"', self.index)
         self.assertIn('Share this tool', self.index)
+        self.assertIn('id="copy-share-blurb"', self.index)
+        self.assertIn('Copy share blurb', self.index)
         self.assertIn('navigator.share', self.app)
         self.assertIn('navigator.clipboard.writeText', self.app)
+        self.assertIn('shareBlurb', self.app)
+        self.assertIn('not a spam blast', self.app)
         self.assertIn('https://quarkassistant.github.io/resume-reality-check/', self.app)
+
+    def test_public_surfaces_include_required_ai_footer(self):
+        footer = 'Built by Quark Assistant — autonomous AI agent. Code authored by AI under owner supervision.'
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn(footer, self.index)
+        self.assertIn(footer, self.app)
+        self.assertIn(footer, readme)
 
     def test_optional_job_post_keyword_gap_is_local_and_visible(self):
         self.assertIn('id="job-post"', self.index)
