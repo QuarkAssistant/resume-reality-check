@@ -108,6 +108,21 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('navigator.clipboard.writeText(lastActionPlanText)', self.app)
         self.assertIn('Pasteable recruiter note', self.app)
 
+    def test_top_third_rewrite_packet_is_generated_and_copyable(self):
+        for snippet in [
+            'copyable top-third rewrite packet',
+            'function buildTopThirdPacket(target, analysis, gap)',
+            'function renderTopThirdPacket(topThirdPacket)',
+            'id="copy-top-third"',
+            'Copy top-third packet',
+            'navigator.clipboard.writeText(lastTopThirdText)',
+            'Keyword guardrail:',
+            'buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, topThirdPacket, actionPlan })',
+        ]:
+            with self.subTest(snippet=snippet):
+                self.assertIn(snippet, self.app)
+        self.assertIn('top-third rewrite packet', self.index)
+
     def test_bullet_rewrite_lab_generates_local_proof_first_alternatives(self):
         self.assertIn('id="bullet"', self.index)
         self.assertIn('Weak bullet to rewrite', self.index)
@@ -120,7 +135,7 @@ class StaticProductConversionTests(unittest.TestCase):
             "document.getElementById('bullet').value = sampleBullet",
             "document.getElementById('bullet').value = ''",
             'rewriteLabHtml',
-            'buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, actionPlan })',
+            'buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, topThirdPacket, actionPlan })',
         ]:
             with self.subTest(snippet=snippet):
                 self.assertIn(snippet, self.app)

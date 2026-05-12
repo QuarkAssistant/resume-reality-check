@@ -8,6 +8,7 @@ Free browser-only beta. Paste a resume and get a blunt three-part critique:
 - What hits
 - What kills it
 - The rewrite they'd actually read
+- A copyable top-third rewrite packet for the headline, summary, and proof bullets
 - A local bullet rewrite lab for turning one vague line into proof-first alternatives
 - A copy/download text report for the rewrite pass
 
@@ -33,7 +34,7 @@ Then visit `http://localhost:8080`.
 
 - `index.html` - page structure, privacy/disclosure, Ko-fi tip CTA, and report export controls
 - `styles.css` - responsive dark UI
-- `app.js` - browser-only resume critique rules plus local fit scoring, bullet rewrite lab, and copy/download report export
+- `app.js` - browser-only resume critique rules plus local fit scoring, top-third rewrite packet, bullet rewrite lab, and copy/download report export
 
 ## Limitations
 

@@ -157,7 +157,7 @@ function buildRewriteLab({ target, bullet, analysis, gap }) {
 const productUrl = 'https://quarkassistant.github.io/resume-reality-check/';
 const kofiUrl = 'https://ko-fi.com/quarkassistant';
 const disclosureFooter = 'Built by Quark Assistant — autonomous AI agent. Code authored by AI under owner supervision.';
-const shareBlurb = `Free browser-only resume reality check: paste a resume + job post for a fit snapshot, keyword gap, blunt critique, and 5-minute apply plan. No upload, no storage. ${productUrl}\n\n${disclosureFooter}`;
+const shareBlurb = `Free browser-only resume reality check: paste a resume + job post for a fit snapshot, keyword gap, copyable top-third rewrite packet, blunt critique, and 5-minute apply plan. No upload, no storage. ${productUrl}\n\n${disclosureFooter}`;
 const tipCta = `
   <p class="result-tip">
     Helpful? <a href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip $5 via Ko-fi</a>
@@ -165,6 +165,7 @@ const tipCta = `
 `;
 let latestReportText = '';
 let lastActionPlanText = '';
+let lastTopThirdText = '';
 
 function showReportActions(show, statusText = '') {
   const panel = document.getElementById('report-actions');
@@ -178,7 +179,7 @@ function plainList(title, items) {
   return `${title}\n${items.map(item => `- ${item.replace(/<[^>]+>/g, '')}`).join('\n')}`;
 }
 
-function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab = [], actionPlan = [] }) {
+function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab = [], topThirdPacket = [], actionPlan = [] }) {
   const lines = [
     'AI Resume Reality Check',
     productUrl,
@@ -214,6 +215,12 @@ function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewrit
       plainList('Bullet rewrite lab', rewriteLab)
     );
   }
+  if (topThirdPacket && topThirdPacket.length) {
+    lines.push(
+      '',
+      plainList('Copyable top-third rewrite packet', topThirdPacket)
+    );
+  }
   lines.push(
     '',
     plainList('5-minute apply plan', actionPlan),
@@ -224,6 +231,46 @@ function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewrit
     disclosureFooter
   );
   return `${lines.join('\n')}\n`;
+}
+
+function buildTopThirdPacket(target, analysis, gap) {
+  const role = target || 'target role';
+  const metric = analysis.metrics.length ? preview(analysis.metrics, 3) : '[add one real metric]';
+  const toolProof = analysis.foundTools.length
+    ? preview(analysis.foundTools, 4)
+    : (gap && gap.present.length ? preview(gap.present, 4) : '[tools/processes from the job post]');
+  const keywordCue = gap && gap.missing.length
+    ? `Weave in only if true: ${preview(gap.missing, 5)}.`
+    : 'Keep the wording aligned to the job post without keyword stuffing.';
+  const strongestVerb = analysis.foundVerbs[0] || 'improved';
+  return [
+    `Headline: ${role} candidate focused on measurable outcomes, ${toolProof}, and practical execution.`,
+    `Summary: I turn messy work into clear systems and outcomes. Strongest proof to verify first: ${metric}.`,
+    `Proof bullet 1: ${strongestVerb.charAt(0).toUpperCase() + strongestVerb.slice(1)} [specific workflow/customer/process] using ${toolProof}; measured by ${metric}.`,
+    'Proof bullet 2: Cut one vague duty line and replace it with scope, action, tool, and before/after result.',
+    `Keyword guardrail: ${keywordCue}`,
+  ];
+}
+
+function renderTopThirdPacket(topThirdPacket) {
+  lastTopThirdText = `AI Resume Reality Check — copyable top-third rewrite packet\n\n${topThirdPacket.map(item => `- ${item}`).join('\n')}\n\n${disclosureFooter}`;
+  return `
+    <h3 class="packet">Copyable top-third rewrite packet</h3>
+    <ul class="top-third">${topThirdPacket.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+    <button id="copy-top-third" class="secondary copy-top-third" type="button">Copy top-third packet</button>
+    <span id="top-third-status" class="small" role="status" aria-live="polite"></span>
+  `;
+}
+
+async function copyTopThirdPacket() {
+  const status = document.getElementById('top-third-status');
+  if (!lastTopThirdText || !status) return;
+  try {
+    await navigator.clipboard.writeText(lastTopThirdText);
+    status.textContent = 'Copied. Paste it into the top third of your resume draft, then replace placeholders with facts.';
+  } catch (err) {
+    status.textContent = 'Copy failed. Select the top-third packet manually.';
+  }
 }
 
 async function copyReport() {
@@ -332,6 +379,7 @@ function critique() {
   if (!text) {
     latestReportText = '';
     lastActionPlanText = '';
+    lastTopThirdText = '';
     showReportActions(false);
     out.className = 'result';
     out.innerHTML = `<h3>What hits</h3><ul><li>Nothing yet. Paste a resume first.</li></ul><h3>What kills it</h3><ul><li>An empty resume has a 0% interview conversion rate, which is impressive in the wrong direction.</li></ul><h3>The rewrite they'd actually read</h3><ul><li>Paste real resume text, remove sensitive details if needed, and run the check again.</li></ul>${tipCta}`;
@@ -381,6 +429,7 @@ function critique() {
     </ul>
   ` : '';
   const actionPlan = buildActionPlan(target, a, gap, rewrites);
+  const topThirdPacket = buildTopThirdPacket(target, a, gap);
 
   const snapshotHtml = `
     <section class="fit-snapshot" aria-label="Applicant fit snapshot">
@@ -410,10 +459,11 @@ function critique() {
     ${gapHtml}
     <h3 class="rewrite">The rewrite they'd actually read</h3><ul>${rewrites.map(x => `<li>${x}</li>`).join('')}</ul>
     ${rewriteLabHtml}
+    ${renderTopThirdPacket(topThirdPacket)}
     ${renderActionPlan(actionPlan)}
     ${tipCta}
   `;
-  latestReportText = buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, actionPlan });
+  latestReportText = buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, topThirdPacket, actionPlan });
   showReportActions(true, 'Report ready: copy it, download it, then rewrite while the notes are fresh.');
 }
 document.getElementById('run').addEventListener('click', critique);
@@ -423,6 +473,7 @@ document.getElementById('copy-report').addEventListener('click', copyReport);
 document.getElementById('download-report').addEventListener('click', downloadReport);
 document.getElementById('result').addEventListener('click', event => {
   if (event.target && event.target.id === 'copy-plan') copyActionPlan();
+  if (event.target && event.target.id === 'copy-top-third') copyTopThirdPacket();
 });
 document.getElementById('sample').addEventListener('click', () => {
   document.getElementById('resume').value = sample;
@@ -438,6 +489,7 @@ document.getElementById('clear').addEventListener('click', () => {
   document.getElementById('target').value = '';
   latestReportText = '';
   lastActionPlanText = '';
+  lastTopThirdText = '';
   showReportActions(false);
   document.getElementById('result').className = 'placeholder';
   document.getElementById('result').textContent = 'Your critique will appear here.';

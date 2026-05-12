@@ -70,8 +70,9 @@ button.secondary { color: var(--text); background: #222b3a; border: 1px solid va
 .good { color: var(--good); }
 .gap { color: var(--accent); }
 .packet { color: #fde68a; }
-.action-plan { padding-left: 1.4rem; border: 1px solid var(--line); border-radius: 16px; background: rgba(253, 230, 138, 0.07); padding-top: 12px; padding-bottom: 12px; }
-.copy-plan { margin: 4px 10px 10px 0; }
+.action-plan, .top-third { padding-left: 1.4rem; border: 1px solid var(--line); border-radius: 16px; background: rgba(253, 230, 138, 0.07); padding-top: 12px; padding-bottom: 12px; }
+.top-third { background: rgba(192, 132, 252, 0.08); border-color: rgba(192,132,252,0.36); }
+.copy-plan, .copy-top-third { margin: 4px 10px 10px 0; }
 .rewrite { color: #e9d5ff; }
 .lab { color: #bfdbfe; }
 .cta { margin-top: 24px; }
