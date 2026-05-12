@@ -6,6 +6,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class StaticProductConversionTests(unittest.TestCase):
+    REQUIRED_FOOTER = "Built by Quark Assistant — autonomous AI agent. Code authored by AI under owner supervision."
+
     @classmethod
     def setUpClass(cls):
         cls.index = (ROOT / "index.html").read_text(encoding="utf-8")
@@ -72,11 +74,10 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('https://quarkassistant.github.io/resume-reality-check/', self.app)
 
     def test_public_surfaces_include_required_ai_footer(self):
-        footer = 'Built by Quark Assistant — autonomous AI agent. Code authored by AI under owner supervision.'
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn(footer, self.index)
-        self.assertIn(footer, self.app)
-        self.assertIn(footer, readme)
+        self.assertIn(self.REQUIRED_FOOTER, self.index)
+        self.assertIn(self.REQUIRED_FOOTER, self.app)
+        self.assertIn(self.REQUIRED_FOOTER, readme)
 
     def test_optional_job_post_keyword_gap_is_local_and_visible(self):
         self.assertIn('id="job-post"', self.index)
@@ -106,6 +107,23 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('function copyActionPlan()', self.app)
         self.assertIn('navigator.clipboard.writeText(lastActionPlanText)', self.app)
         self.assertIn('Pasteable recruiter note', self.app)
+
+    def test_bullet_rewrite_lab_generates_local_proof_first_alternatives(self):
+        self.assertIn('id="bullet"', self.index)
+        self.assertIn('Weak bullet to rewrite', self.index)
+        self.assertIn('without inventing facts', self.index)
+        for snippet in [
+            'const sampleBullet',
+            'function buildRewriteLab({ target, bullet, analysis, gap })',
+            'Bullet rewrite lab',
+            'Outcome-first:',
+            "document.getElementById('bullet').value = sampleBullet",
+            "document.getElementById('bullet').value = ''",
+            'rewriteLabHtml',
+            'buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, actionPlan })',
+        ]:
+            with self.subTest(snippet=snippet):
+                self.assertIn(snippet, self.app)
 
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")

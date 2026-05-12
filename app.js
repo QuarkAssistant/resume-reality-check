@@ -28,6 +28,7 @@ Skills
 Excel, SQL, Notion, Jira, Salesforce`;
 const sampleJob = `Product Operations Associate
 We need someone to improve weekly reporting, maintain Salesforce hygiene, build SQL and Excel dashboards, document operations workflows, and coordinate vendor onboarding. Strong candidates can quantify process improvements and communicate with support, sales, and leadership.`;
+const sampleBullet = 'Responsible for weekly reporting and helped with process improvements for support and sales teams.';
 
 function esc(s) {
   return String(s).replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
@@ -137,6 +138,22 @@ function buildFitSnapshot(a, gap) {
 
   return { score, verdict, checks, priorityFixes: dedupedFixes };
 }
+function buildRewriteLab({ target, bullet, analysis, gap }) {
+  const sourceBullet = (bullet || analysis.bullets.find(b => weakPhrases.some(p => b.toLowerCase().includes(p))) || analysis.bullets[0] || '').trim();
+  if (!sourceBullet) return [];
+  const role = target || 'target role';
+  const metric = analysis.metrics.length ? preview(analysis.metrics, 2) : '[add real number: time, cost, volume, revenue, SLA, users]';
+  const toolPhrase = analysis.foundTools.length ? preview(analysis.foundTools, 4) : (gap && gap.present.length ? preview(gap.present, 3) : '[tool/process from the job post]');
+  const missingTerms = gap && gap.missing.length ? preview(gap.missing, 4) : '[job-post keyword you can prove]';
+  const cleaned = sourceBullet.replace(/^(responsible for|helped with|worked on|assisted with|duties included)\s+/i, '').replace(/[.\s]+$/, '');
+  return [
+    `Rewrite lab source: "${sourceBullet.slice(0, 180)}"`,
+    `Outcome-first: Improved ${cleaned || '[business process]'} for ${role} by [specific action] using ${toolPhrase}; measured by ${metric}.`,
+    `Scope-first: Owned ${cleaned || '[workflow]'} across [team/system/customer segment], reducing [pain] by ${metric} while keeping ${missingTerms} visible and honest.`,
+    `Plain-English version: Built a repeatable way to handle ${cleaned || '[workstream]'}, so [stakeholder] got [business result] faster/cheaper/more reliably. Add the exact number before applying.`
+  ];
+}
+
 const productUrl = 'https://quarkassistant.github.io/resume-reality-check/';
 const kofiUrl = 'https://ko-fi.com/quarkassistant';
 const disclosureFooter = 'Built by Quark Assistant — autonomous AI agent. Code authored by AI under owner supervision.';
@@ -161,7 +178,7 @@ function plainList(title, items) {
   return `${title}\n${items.map(item => `- ${item.replace(/<[^>]+>/g, '')}`).join('\n')}`;
 }
 
-function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, actionPlan = [] }) {
+function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab = [], actionPlan = [] }) {
   const lines = [
     'AI Resume Reality Check',
     productUrl,
@@ -189,7 +206,15 @@ function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, action
   }
   lines.push(
     '',
-    plainList("The rewrite they'd actually read", rewrites),
+    plainList("The rewrite they'd actually read", rewrites)
+  );
+  if (rewriteLab && rewriteLab.length) {
+    lines.push(
+      '',
+      plainList('Bullet rewrite lab', rewriteLab)
+    );
+  }
+  lines.push(
     '',
     plainList('5-minute apply plan', actionPlan),
     '',
@@ -301,6 +326,7 @@ async function copyShareBlurb() {
 function critique() {
   const text = document.getElementById('resume').value.trim();
   const target = document.getElementById('target').value.trim();
+  const bullet = document.getElementById('bullet').value.trim();
   const jobPost = document.getElementById('job-post').value.trim();
   const out = document.getElementById('result');
   if (!text) {
@@ -344,6 +370,7 @@ function critique() {
   rewrites.push(`Bullet formula: Improved [business result] by [specific action]${toolPhrase}; measured by ${metric}.`);
   if (weakBullet) rewrites.push(`Replace: "${esc(weakBullet.slice(0, 140))}" with "Owned [specific problem], took [specific action], and delivered [number/result]."`);
   rewrites.push('Final pass: cut adjectives you cannot prove, move the best metric into the first half page, and align headings to the role being pursued.');
+  const rewriteLab = buildRewriteLab({ target, bullet, analysis: a, gap });
 
   const gapHtml = gap ? `
     <h3 class="gap">Keyword gap from the job post</h3>
@@ -369,6 +396,10 @@ function critique() {
       </div>
     </section>
   `;
+  const rewriteLabHtml = rewriteLab.length ? `
+    <h3 class="lab">Bullet rewrite lab</h3>
+    <ul>${rewriteLab.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
+  ` : '';
 
   out.className = 'result';
   out.innerHTML = `
@@ -378,10 +409,11 @@ function critique() {
     <h3 class="bad">What kills it</h3><ul>${kills.map(x => `<li>${x}</li>`).join('')}</ul>
     ${gapHtml}
     <h3 class="rewrite">The rewrite they'd actually read</h3><ul>${rewrites.map(x => `<li>${x}</li>`).join('')}</ul>
+    ${rewriteLabHtml}
     ${renderActionPlan(actionPlan)}
     ${tipCta}
   `;
-  latestReportText = buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, actionPlan });
+  latestReportText = buildPlainReport({ target, snapshot, hits, kills, gap, rewrites, rewriteLab, actionPlan });
   showReportActions(true, 'Report ready: copy it, download it, then rewrite while the notes are fresh.');
 }
 document.getElementById('run').addEventListener('click', critique);
@@ -395,12 +427,14 @@ document.getElementById('result').addEventListener('click', event => {
 document.getElementById('sample').addEventListener('click', () => {
   document.getElementById('resume').value = sample;
   document.getElementById('job-post').value = sampleJob;
+  document.getElementById('bullet').value = sampleBullet;
   document.getElementById('target').value = 'Product operations associate';
   critique();
 });
 document.getElementById('clear').addEventListener('click', () => {
   document.getElementById('resume').value = '';
   document.getElementById('job-post').value = '';
+  document.getElementById('bullet').value = '';
   document.getElementById('target').value = '';
   latestReportText = '';
   lastActionPlanText = '';
