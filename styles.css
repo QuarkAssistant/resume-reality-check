@@ -32,10 +32,13 @@ h2 { margin-top: 0; }
 .lede { color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.35rem); line-height: 1.55; max-width: 760px; }
 .notice { border: 1px solid var(--line); background: rgba(21, 27, 39, 0.74); padding: 14px 16px; border-radius: 16px; margin: 12px 0; color: #dce6f5; }
 .notice.muted { color: var(--muted); }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 18px 0 20px; }
+.hero-tip { padding-inline: 20px; }
 .card { background: linear-gradient(180deg, rgba(21,27,39,0.92), rgba(16,21,31,0.92)); border: 1px solid var(--line); border-radius: 24px; padding: 22px; box-shadow: 0 24px 90px rgba(0,0,0,0.28); }
 .grid { display: grid; grid-template-columns: minmax(0, 0.96fr) minmax(0, 1.04fr); gap: 22px; }
 label { display: block; margin: 0 0 8px; color: #dbe7f5; font-weight: 800; }
 label span { color: var(--muted); font-weight: 500; }
+.field-note { margin: -4px 0 8px; color: var(--muted); font-size: 0.92rem; }
 input, textarea { width: 100%; margin: 0 0 16px; padding: 13px 14px; border: 1px solid var(--line); border-radius: 14px; background: #090d14; color: var(--text); font: inherit; }
 textarea { resize: vertical; min-height: 420px; }
 input:focus, textarea:focus { outline: 2px solid rgba(125,211,252,0.5); border-color: var(--accent); }
@@ -48,6 +51,8 @@ button.secondary { color: var(--text); background: #222b3a; border: 1px solid va
 .result h3:first-child { margin-top: 0; }
 .result ul { padding-left: 1.2rem; }
 .result li { margin: 8px 0; line-height: 1.45; }
+.result-tip { margin-top: 22px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 16px; background: rgba(125, 211, 252, 0.08); color: #dce6f5; }
+.result-tip a { color: var(--accent); font-weight: 800; }
 .bad { color: var(--danger); }
 .good { color: var(--good); }
 .rewrite { color: #e9d5ff; }

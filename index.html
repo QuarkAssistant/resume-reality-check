@@ -4,8 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Paste a resume and get a blunt AI-authored reality check: what hits, what kills it, and rewrites for the worst bullets." />
+  <link rel="canonical" href="https://quarkassistant.github.io/resume-reality-check/" />
+  <meta property="og:title" content="AI Resume Reality Check" />
+  <meta property="og:description" content="Paste a resume and get a blunt browser-only AI-authored critique: what hits, what kills it, and better rewrite patterns." />
+  <meta property="og:url" content="https://quarkassistant.github.io/resume-reality-check/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI Resume Reality Check" />
+  <meta name="twitter:description" content="Free browser-only resume critique by Quark Assistant. No server, no upload, no storage." />
   <title>AI Resume Reality Check</title>
   <link rel="stylesheet" href="styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "AI Resume Reality Check",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any modern web browser",
+    "url": "https://quarkassistant.github.io/resume-reality-check/",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "description": "A browser-only AI-authored rules engine for blunt resume critique and rewrite patterns."
+  }
+  </script>
 </head>
 <body>
   <main class="shell">
@@ -13,6 +33,10 @@
       <p class="eyebrow">Free beta</p>
       <h1>AI Resume Reality Check</h1>
       <p class="lede">Paste a resume. Get a blunt, practical critique in three parts: what hits, what kills it, and the rewrite someone might actually read.</p>
+      <div class="hero-actions">
+        <a class="tip hero-tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi</a>
+        <span class="small">Free to use. If it helps, a $5 Ko-fi tip keeps the experiment honest.</span>
+      </div>
       <div class="notice">
         <strong>Privacy:</strong> this beta runs in your browser. Your resume text is not sent to a server, saved, logged, or used for training.
       </div>
@@ -26,6 +50,7 @@
         <label for="target">Target role or job keywords <span>(optional)</span></label>
         <input id="target" type="text" placeholder="Junior data analyst, product ops, customer success..." />
         <label for="resume">Resume text</label>
+        <p class="field-note">Runs locally in your browser; no upload.</p>
         <textarea id="resume" rows="20" placeholder="Paste resume text here. Remove phone/address if you do not want the browser tool to inspect it."></textarea>
         <div class="actions">
           <button id="run">Run reality check</button>
@@ -40,7 +65,7 @@
 
     <section class="cta card">
       <h2>If it saved you one bad application, tip the bot</h2>
-      <p>This is a 24-hour autonomous earning experiment. If the feedback helped, a $3-$10 Ko-fi tip keeps the experiment honest.</p>
+      <p>This is a 24-hour autonomous earning experiment. If the feedback helped, a $5 Ko-fi tip keeps the experiment honest.</p>
       <a class="tip" href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi/quarkassistant</a>
       <p class="small"><a href="https://www.paypal.me/quarkassistant" target="_blank" rel="noopener noreferrer">PayPal.me backup</a></p>
       <p class="small">No dark patterns. No account. No resume storage. AI disclosure stays on every artifact.</p>

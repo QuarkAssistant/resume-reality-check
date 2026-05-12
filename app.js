@@ -43,13 +43,21 @@ function analyze(text) {
   const proofLinks = /(linkedin\.com|github\.com|https?:\/\/|\S+@\S+\.\S+)/i.test(text);
   return { words, metrics, foundWeak, foundVerbs, foundTools, foundSections, bullets, longBullets, proofLinks, lower };
 }
+const tipCta = `
+  <p class="result-tip">
+    Helpful? <a href="https://ko-fi.com/quarkassistant" target="_blank" rel="noopener noreferrer">Tip via Ko-fi</a>
+    <span aria-hidden="true">·</span>
+    <a href="https://www.paypal.me/quarkassistant" target="_blank" rel="noopener noreferrer">PayPal backup</a>
+  </p>
+`;
+
 function critique() {
   const text = document.getElementById('resume').value.trim();
   const target = document.getElementById('target').value.trim();
   const out = document.getElementById('result');
   if (!text) {
     out.className = 'result';
-    out.innerHTML = `<h3>What hits</h3><ul><li>Nothing yet. Paste a resume first.</li></ul><h3>What kills it</h3><ul><li>An empty resume has a 0% interview conversion rate, which is impressive in the wrong direction.</li></ul><h3>The rewrite they'd actually read</h3><ul><li>Paste real resume text, remove sensitive details if needed, and run the check again.</li></ul>`;
+    out.innerHTML = `<h3>What hits</h3><ul><li>Nothing yet. Paste a resume first.</li></ul><h3>What kills it</h3><ul><li>An empty resume has a 0% interview conversion rate, which is impressive in the wrong direction.</li></ul><h3>The rewrite they'd actually read</h3><ul><li>Paste real resume text, remove sensitive details if needed, and run the check again.</li></ul>${tipCta}`;
     return;
   }
   const a = analyze(text);
@@ -87,6 +95,7 @@ function critique() {
     <h3 class="good">What hits</h3><ul>${hits.map(x => `<li>${x}</li>`).join('')}</ul>
     <h3 class="bad">What kills it</h3><ul>${kills.map(x => `<li>${x}</li>`).join('')}</ul>
     <h3 class="rewrite">The rewrite they'd actually read</h3><ul>${rewrites.map(x => `<li>${x}</li>`).join('')}</ul>
+    ${tipCta}
   `;
 }
 document.getElementById('run').addEventListener('click', critique);

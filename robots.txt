@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://quarkassistant.github.io/resume-reality-check/sitemap.xml
