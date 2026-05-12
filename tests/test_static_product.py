@@ -88,6 +88,14 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('Weak filler', self.app)
         self.assertIn('plainList(\'Priority fixes\'', self.app)
 
+    def test_5_minute_apply_plan_is_generated_and_copyable(self):
+        self.assertIn('5-minute apply plan', self.app)
+        self.assertIn('function buildActionPlan(', self.app)
+        self.assertIn('id="copy-plan"', self.app)
+        self.assertIn('function copyActionPlan()', self.app)
+        self.assertIn('navigator.clipboard.writeText(lastActionPlanText)', self.app)
+        self.assertIn('Pasteable recruiter note', self.app)
+
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
         sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
