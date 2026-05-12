@@ -69,6 +69,74 @@ function analyze(text) {
   const proofLinks = /(linkedin\.com|github\.com|https?:\/\/|\S+@\S+\.\S+)/i.test(text);
   return { words, metrics, foundWeak, foundVerbs, foundTools, foundSections, bullets, longBullets, proofLinks, lower };
 }
+
+function buildFitSnapshot(a, gap) {
+  const keywordRate = gap && gap.required.length ? gap.present.length / gap.required.length : null;
+  let score = 34;
+  const checks = [];
+  const priorityFixes = [];
+
+  if (keywordRate === null) {
+    checks.push({ label: 'Keyword overlap', status: 'Needs job post', detail: 'Paste a job post to score role-language overlap instead of guessing.' });
+    priorityFixes.push('Paste the exact job post, then rerun the check so the rewrite targets real hiring language.');
+  } else if (keywordRate >= 0.55) {
+    score += 28;
+    checks.push({ label: 'Keyword overlap', status: 'Strong', detail: `${gap.present.length}/${gap.required.length} top job-post terms are visible.` });
+  } else if (keywordRate >= 0.3) {
+    score += 16;
+    checks.push({ label: 'Keyword overlap', status: 'Partial', detail: `${gap.present.length}/${gap.required.length} top terms match; add honest missing terms with proof.` });
+    priorityFixes.push(`Lift the missing job language into proof bullets: ${preview(gap.missing, 5) || 'none'}.`);
+  } else {
+    score += 5;
+    checks.push({ label: 'Keyword overlap', status: 'Weak', detail: `${gap.present.length}/${gap.required.length} top terms match; the resume may read off-target.` });
+    priorityFixes.push(`Rewrite the top summary and first two bullets around the role terms: ${preview(gap.missing, 5) || 'top job keywords'}.`);
+  }
+
+  if (a.metrics.length >= 3) {
+    score += 20;
+    checks.push({ label: 'Metrics proof', status: 'Strong', detail: `${a.metrics.length} measurable results found.` });
+  } else if (a.metrics.length) {
+    score += 12;
+    checks.push({ label: 'Metrics proof', status: 'Partial', detail: `${a.metrics.length} measurable result${a.metrics.length === 1 ? '' : 's'} found; add more scope and outcomes.` });
+    priorityFixes.push('Add 2-3 numbers: volume, time saved, revenue, cost, SLA, users, or before/after rate.');
+  } else {
+    checks.push({ label: 'Metrics proof', status: 'Missing', detail: 'No obvious numbers; duties need evidence.' });
+    priorityFixes.push('Convert duty bullets into outcomes with numbers before sending applications.');
+  }
+
+  if (a.foundVerbs.length >= 4) {
+    score += 12;
+    checks.push({ label: 'Action verbs', status: 'Strong', detail: `${a.foundVerbs.length} strong verbs found.` });
+  } else if (a.foundVerbs.length >= 2) {
+    score += 7;
+    checks.push({ label: 'Action verbs', status: 'Partial', detail: 'Some bullets start with outcomes, but passive lines remain.' });
+  } else {
+    checks.push({ label: 'Action verbs', status: 'Weak', detail: 'Too many lines may read like responsibilities.' });
+    priorityFixes.push('Start the most important bullets with built, reduced, led, shipped, improved, or automated.');
+  }
+
+  if (a.foundWeak.length) {
+    score -= Math.min(12, a.foundWeak.length * 4);
+    checks.push({ label: 'Weak filler', status: 'Found', detail: `${a.foundWeak.length} generic phrase${a.foundWeak.length === 1 ? '' : 's'} should be replaced.` });
+    priorityFixes.push(`Replace vague phrases such as ${preview(a.foundWeak, 4)} with specific actions and outcomes.`);
+  } else {
+    score += 6;
+    checks.push({ label: 'Weak filler', status: 'Clean', detail: 'No obvious generic filler from the built-in list.' });
+  }
+
+  if (a.foundTools.length >= 3) score += 6;
+  if (a.foundSections.includes('experience') || a.foundSections.includes('projects')) score += 6;
+  if (a.words.length < 120) score -= 8;
+  if (a.words.length > 900) score -= 6;
+  if (a.longBullets.length) score -= 5;
+
+  score = Math.max(0, Math.min(100, Math.round(score)));
+  const verdict = score >= 76 ? 'Likely worth applying after a polish pass' : score >= 55 ? 'Promising but needs targeted rewrites first' : 'Not ready yet: fix proof and targeting before applying';
+  const dedupedFixes = uniq(priorityFixes).slice(0, 4);
+  if (!dedupedFixes.length) dedupedFixes.push('Polish the top third, keep the strongest metric first, and remove anything that does not support this target role.');
+
+  return { score, verdict, checks, priorityFixes: dedupedFixes };
+}
 const productUrl = 'https://quarkassistant.github.io/resume-reality-check/';
 const kofiUrl = 'https://ko-fi.com/quarkassistant';
 const tipCta = `
@@ -90,12 +158,18 @@ function plainList(title, items) {
   return `${title}\n${items.map(item => `- ${item.replace(/<[^>]+>/g, '')}`).join('\n')}`;
 }
 
-function buildPlainReport({ target, hits, kills, gap, rewrites }) {
+function buildPlainReport({ target, snapshot, hits, kills, gap, rewrites }) {
   const lines = [
     'AI Resume Reality Check',
     productUrl,
     '',
     target ? `Target: ${target}` : 'Target: not specified',
+    '',
+    'Applicant fit snapshot',
+    `- Score: ${snapshot.score}/100 — ${snapshot.verdict}`,
+    ...snapshot.checks.map(check => `- ${check.label}: ${check.status} — ${check.detail}`),
+    '',
+    plainList('Priority fixes', snapshot.priorityFixes),
     '',
     plainList('What hits', hits),
     '',
@@ -184,6 +258,7 @@ function critique() {
   const kills = [];
   const rewrites = [];
   const gap = jobPost ? keywordGap(text, jobPost) : null;
+  const snapshot = buildFitSnapshot(a, gap);
   if (gap && gap.present.length) hits.push(`Job-post overlap is visible: ${esc(preview(gap.present, 6))}. Keep those exact words where they are honest.`);
   if (gap && gap.missing.length) kills.push(`Keyword gap from the pasted job post: ${esc(preview(gap.missing, 8))}. Add only the ones you can defend with real experience.`);
   if (a.metrics.length) hits.push(`You included measurable proof (${esc(preview(a.metrics))}). Keep those numbers close to the top.`);
@@ -221,15 +296,32 @@ function critique() {
     </ul>
   ` : '';
 
+  const snapshotHtml = `
+    <section class="fit-snapshot" aria-label="Applicant fit snapshot">
+      <div>
+        <p class="snapshot-label">Applicant fit snapshot</p>
+        <p class="fit-score">${snapshot.score}<span>/100</span></p>
+      </div>
+      <div>
+        <p class="snapshot-verdict">${esc(snapshot.verdict)}</p>
+        <ul class="fit-checks">
+          ${snapshot.checks.map(check => `<li><strong>${esc(check.label)}:</strong> ${esc(check.status)} — ${esc(check.detail)}</li>`).join('')}
+        </ul>
+      </div>
+    </section>
+  `;
+
   out.className = 'result';
   out.innerHTML = `
+    ${snapshotHtml}
+    <h3 class="priority">Priority fixes</h3><ul>${snapshot.priorityFixes.map(x => `<li>${esc(x)}</li>`).join('')}</ul>
     <h3 class="good">What hits</h3><ul>${hits.map(x => `<li>${x}</li>`).join('')}</ul>
     <h3 class="bad">What kills it</h3><ul>${kills.map(x => `<li>${x}</li>`).join('')}</ul>
     ${gapHtml}
     <h3 class="rewrite">The rewrite they'd actually read</h3><ul>${rewrites.map(x => `<li>${x}</li>`).join('')}</ul>
     ${tipCta}
   `;
-  latestReportText = buildPlainReport({ target, hits, kills, gap, rewrites });
+  latestReportText = buildPlainReport({ target, snapshot, hits, kills, gap, rewrites });
   showReportActions(true, 'Report ready: copy it, download it, then rewrite while the notes are fresh.');
 }
 document.getElementById('run').addEventListener('click', critique);

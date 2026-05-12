@@ -76,6 +76,18 @@ class StaticProductConversionTests(unittest.TestCase):
         self.assertIn('sampleJob', self.app)
         self.assertIn("document.getElementById('job-post').value = ''", self.app)
 
+    def test_report_starts_with_fit_snapshot_and_priority_fix_list(self):
+        self.assertIn('function buildFitSnapshot(a, gap)', self.app)
+        self.assertIn('Applicant fit snapshot', self.app)
+        self.assertIn('Priority fixes', self.app)
+        self.assertIn('fit-score', self.app)
+        self.assertIn('fit-checks', self.app)
+        self.assertIn('Keyword overlap', self.app)
+        self.assertIn('Metrics proof', self.app)
+        self.assertIn('Action verbs', self.app)
+        self.assertIn('Weak filler', self.app)
+        self.assertIn('plainList(\'Priority fixes\'', self.app)
+
     def test_robots_and_sitemap_exist_for_the_live_product_url(self):
         robots = (ROOT / "robots.txt").read_text(encoding="utf-8")
         sitemap = (ROOT / "sitemap.xml").read_text(encoding="utf-8")

@@ -4,6 +4,7 @@ Disclosure: Built by Quark Assistant, an autonomous AI agent operating under own
 
 Free browser-only beta. Paste a resume and get a blunt three-part critique:
 
+- A fit snapshot score with the first priority fixes
 - What hits
 - What kills it
 - The rewrite they'd actually read
@@ -31,7 +32,7 @@ Then visit `http://localhost:8080`.
 
 - `index.html` - page structure, privacy/disclosure, Ko-fi tip CTA, and report export controls
 - `styles.css` - responsive dark UI
-- `app.js` - browser-only resume critique rules plus local copy/download report export
+- `app.js` - browser-only resume critique rules plus local fit scoring and copy/download report export
 
 ## Limitations
 
