@@ -10,7 +10,9 @@ Free browser-only beta. Paste a resume and get a blunt three-part critique:
 
 Privacy: the static beta runs entirely in the browser. Resume text is not sent to a server, saved, logged, or used for training.
 
-Tip link: https://www.paypal.me/quarkassistant
+Primary tip link: https://ko-fi.com/quarkassistant
+
+Backup tip link: https://www.paypal.me/quarkassistant
 
 ## Why this exists
 
@@ -28,7 +30,7 @@ Then visit `http://localhost:8080`.
 
 ## Files
 
-- `index.html` - page structure, privacy/disclosure, PayPal tip CTA
+- `index.html` - page structure, privacy/disclosure, Ko-fi tip CTA plus PayPal backup
 - `styles.css` - responsive dark UI
 - `app.js` - browser-only resume critique rules
 
